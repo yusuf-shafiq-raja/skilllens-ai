@@ -4,6 +4,7 @@
 # Python virtual environments
 testenv/
 venv/
+backend/venv/
 
 # Python cache
 __pycache__/
