@@ -2,7 +2,8 @@ from fastapi import FastAPI
 
 from app.core.config import APP_NAME, APP_VERSION
 from app.database import Base, engine
-
+from app.routes.auth import router as auth_router
+from app.routes.user import router as user_router
 # Import Models
 from app.models.user import User
 
@@ -20,7 +21,8 @@ app = FastAPI(
 
 # Register Routes
 app.include_router(health_router)
-
+app.include_router(auth_router)
+app.include_router(user_router)
 
 @app.get("/")
 def root():
