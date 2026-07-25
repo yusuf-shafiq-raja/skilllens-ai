@@ -15,7 +15,8 @@ SessionLocal = sessionmaker(
 
 # Base class for all database models
 Base = declarative_base()
-
+from app.models.user import User
+from app.models.skill import Skill
 
 # Dependency
 def get_db():
