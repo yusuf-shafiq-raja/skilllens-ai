@@ -1,11 +1,13 @@
 from sqlalchemy.orm import Session
 
 from app.models.skill import Skill
+from app.models.user import User
 from app.schemas.skill import SkillCreate, SkillUpdate
 
 
-def create_skill(db: Session, skill: SkillCreate):
+def create_skill(db: Session, skill: SkillCreate, current_user: User):
     db_skill = Skill(
+        user_id=current_user.id,
         name=skill.name,
         description=skill.description,
         category=skill.category
@@ -18,16 +20,32 @@ def create_skill(db: Session, skill: SkillCreate):
     return db_skill
 
 
-def get_all_skills(db: Session):
-    return db.query(Skill).all()
+def get_all_skills(db: Session, current_user: User):
+    return (
+        db.query(Skill)
+        .filter(Skill.user_id == current_user.id)
+        .all()
+    )
 
 
-def get_skill_by_id(db: Session, skill_id: int):
-    return db.query(Skill).filter(Skill.id == skill_id).first()
+def get_skill_by_id(db: Session, skill_id: int, current_user: User):
+    return (
+        db.query(Skill)
+        .filter(
+            Skill.id == skill_id,
+            Skill.user_id == current_user.id
+        )
+        .first()
+    )
 
 
-def update_skill(db: Session, skill_id: int, skill: SkillUpdate):
-    db_skill = get_skill_by_id(db, skill_id)
+def update_skill(
+    db: Session,
+    skill_id: int,
+    skill: SkillUpdate,
+    current_user: User
+):
+    db_skill = get_skill_by_id(db, skill_id, current_user)
 
     if not db_skill:
         return None
@@ -42,8 +60,8 @@ def update_skill(db: Session, skill_id: int, skill: SkillUpdate):
     return db_skill
 
 
-def delete_skill(db: Session, skill_id: int):
-    db_skill = get_skill_by_id(db, skill_id)
+def delete_skill(db: Session, skill_id: int, current_user: User):
+    db_skill = get_skill_by_id(db, skill_id, current_user)
 
     if not db_skill:
         return None
