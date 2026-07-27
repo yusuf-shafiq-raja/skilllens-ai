@@ -10,6 +10,7 @@ from app.models.user import User
 # Import Routes
 from app.routes.health import router as health_router
 from app.routes.skill import router as skill_router
+from app.routes.concept import router as concept_router
 # Create Tables
 Base.metadata.create_all(bind=engine)
 
@@ -24,6 +25,7 @@ app.include_router(health_router)
 app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(skill_router)
+app.include_router(concept_router)
 @app.get("/")
 def root():
     return {

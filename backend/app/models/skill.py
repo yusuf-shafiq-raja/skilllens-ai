@@ -26,3 +26,8 @@ class Skill(Base):
     )
 
     owner = relationship("User", back_populates="skills")
+    concepts = relationship(
+    "Concept",
+    back_populates="skill",
+    cascade="all, delete-orphan"
+    )
