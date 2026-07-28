@@ -82,3 +82,8 @@ class Concept(Base):
         "Skill",
         back_populates="concepts"
     )
+    questions = relationship(
+    "Question",
+    back_populates="concept",
+    cascade="all, delete-orphan"
+    )

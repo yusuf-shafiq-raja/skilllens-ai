@@ -21,6 +21,7 @@ Base = declarative_base()
 from app.models.user import User
 from app.models.skill import Skill
 from app.models.concept import Concept
+from app.models.question import Question
 
 def get_db():
     db = SessionLocal()

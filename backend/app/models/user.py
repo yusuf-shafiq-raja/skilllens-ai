@@ -33,3 +33,8 @@ class User(Base):
     back_populates="owner",
     cascade="all, delete-orphan"
     )
+    questions = relationship(
+    "Question",
+    back_populates="owner",
+    cascade="all, delete-orphan"
+    )
