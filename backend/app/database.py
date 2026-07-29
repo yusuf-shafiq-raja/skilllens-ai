@@ -22,7 +22,10 @@ from app.models.user import User
 from app.models.skill import Skill
 from app.models.concept import Concept
 from app.models.question import Question
-
+from app.models.assessment import Assessment
+from app.models.assessment_question import AssessmentQuestion
+from app.models.assessment_attempt import AssessmentAttempt
+from app.models.assessment_answer import AssessmentAnswer
 def get_db():
     db = SessionLocal()
     try:

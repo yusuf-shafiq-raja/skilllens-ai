@@ -38,3 +38,13 @@ class User(Base):
     back_populates="owner",
     cascade="all, delete-orphan"
     )
+    assessments = relationship(
+    "Assessment",
+    back_populates="owner",
+    cascade="all, delete-orphan"
+    )
+    assessment_attempts = relationship(
+    "AssessmentAttempt",
+    back_populates="owner",
+    cascade="all, delete-orphan"
+    )

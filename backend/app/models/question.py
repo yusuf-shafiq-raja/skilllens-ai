@@ -115,3 +115,13 @@ class Question(Base):
         "Concept",
         back_populates="questions"
     )
+    assessment_questions = relationship(
+    "AssessmentQuestion",
+    back_populates="question",
+    cascade="all, delete-orphan"
+    )
+    attempt_answers = relationship(
+    "AssessmentAnswer",
+    back_populates="question",
+    cascade="all, delete-orphan"
+    )
