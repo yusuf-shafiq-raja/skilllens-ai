@@ -125,3 +125,8 @@ class Question(Base):
     back_populates="question",
     cascade="all, delete-orphan"
     )
+    question_competencies = relationship(
+    "QuestionCompetency",
+    back_populates="question",
+    cascade="all, delete-orphan"
+)

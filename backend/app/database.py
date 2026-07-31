@@ -26,6 +26,11 @@ from app.models.assessment import Assessment
 from app.models.assessment_question import AssessmentQuestion
 from app.models.assessment_attempt import AssessmentAttempt
 from app.models.assessment_answer import AssessmentAnswer
+from app.models.competency import Competency
+from app.models.question_competency import QuestionCompetency
+from app.models.competency_score import CompetencyScore
+
+
 def get_db():
     db = SessionLocal()
     try:

@@ -14,6 +14,10 @@ from app.routes.concept import router as concept_router
 from app.routes.question import router as question_router
 from app.routes.assessment import router as assessment_router
 from app.routes.assessment_attempt import router as assessment_attempt_router
+from app.routes.question_competency import router as question_competency_router
+#from app.routes.competency import router as competency_router
+from app.routes.competency_score import router as competency_score_router
+
 
 # Create Tables
 Base.metadata.create_all(bind=engine)
@@ -33,6 +37,10 @@ app.include_router(concept_router)
 app.include_router(question_router)
 app.include_router(assessment_router)
 app.include_router(assessment_attempt_router)
+app.include_router(question_competency_router)
+#app.include_router(competency_router)
+app.include_router(competency_score_router)
+
 
 @app.get("/")
 def root():

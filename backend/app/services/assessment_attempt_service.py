@@ -8,7 +8,7 @@ from app.models.assessment_answer import AssessmentAnswer
 from app.models.assessment_question import AssessmentQuestion
 from app.models.question import Question
 from app.models.user import User
-
+from app.services.competency_service import calculate_competency_scores
 
 # ---------------------------------------------------------
 # Start Assessment
@@ -170,11 +170,19 @@ def submit_answer(
 # Submit Assessment
 # ---------------------------------------------------------
 
+# ---------------------------------------------------------
+# Submit Assessment
+# ---------------------------------------------------------
+
 def submit_assessment(
     db: Session,
     attempt_id: int,
     current_user: User
 ):
+    # ----------------------------------------
+    # Get Attempt
+    # ----------------------------------------
+
     attempt = (
         db.query(AssessmentAttempt)
         .filter(
@@ -190,6 +198,10 @@ def submit_assessment(
     if attempt.is_completed:
         raise ValueError("Assessment already submitted.")
 
+    # ----------------------------------------
+    # Get Submitted Answers
+    # ----------------------------------------
+
     answers = (
         db.query(AssessmentAnswer)
         .filter(
@@ -198,41 +210,91 @@ def submit_assessment(
         .all()
     )
 
+    if not answers:
+        raise ValueError("No answers submitted.")
+
+    # ----------------------------------------
+    # Fetch Questions (Single Query)
+    # ----------------------------------------
+
+    question_ids = [
+        answer.question_id
+        for answer in answers
+    ]
+
+    questions = (
+        db.query(Question)
+        .filter(
+            Question.id.in_(question_ids)
+        )
+        .all()
+    )
+
+    question_map = {
+        question.id: question
+        for question in questions
+    }
+
+    # ----------------------------------------
+    # Calculate Result
+    # ----------------------------------------
+
     score = 0
     total_marks = 0
 
+    correct_answers = 0
+    wrong_answers = 0
+
     for answer in answers:
 
-        question = (
-            db.query(Question)
-            .filter(
-                Question.id == answer.question_id
-            )
-            .first()
+        question = question_map.get(
+            answer.question_id
         )
+
+        if question is None:
+            continue
 
         total_marks += question.marks
 
         if (
             answer.selected_answer.upper()
             ==
-            question.correct_answer.upper()
+            question.correct_answer.value.upper()
         ):
+
             answer.is_correct = True
             answer.marks_obtained = question.marks
+
             score += question.marks
+            correct_answers += 1
 
         else:
+
             answer.is_correct = False
             answer.marks_obtained = 0
 
-    percentage = 0
+            wrong_answers += 1
+
+    unanswered_questions = max(
+        0,
+        len(questions) - len(answers)
+    )
+
+    # ----------------------------------------
+    # Calculate Percentage
+    # ----------------------------------------
 
     if total_marks > 0:
         percentage = round(
             (score / total_marks) * 100,
             2
         )
+    else:
+        percentage = 0
+
+    # ----------------------------------------
+    # Get Assessment
+    # ----------------------------------------
 
     assessment = (
         db.query(Assessment)
@@ -247,6 +309,10 @@ def submit_assessment(
         if percentage >= assessment.passing_score
         else "FAILED"
     )
+
+    # ----------------------------------------
+    # Update Attempt
+    # ----------------------------------------
 
     now = datetime.now(timezone.utc)
 
@@ -263,15 +329,33 @@ def submit_assessment(
     db.commit()
     db.refresh(attempt)
 
+    # ----------------------------------------
+    # Competency Engine (Day 10)
+    # ----------------------------------------
+
+    calculate_competency_scores(
+    db=db,
+    attempt=attempt,
+    answers=answers
+)
+
+    db.commit()
+    # ----------------------------------------
+    # Return Result
+    # ----------------------------------------
+
     return {
         "message": "Assessment submitted successfully.",
+        "attempt_id": attempt.id,
         "score": score,
         "total_marks": total_marks,
         "percentage": percentage,
-        "status": status
+        "status": status,
+        "correct_answers": correct_answers,
+        "wrong_answers": wrong_answers,
+        "unanswered_questions": unanswered_questions,
+        "time_taken_seconds": attempt.time_taken_seconds
     }
-
-
 # ---------------------------------------------------------
 # Get Result
 # ---------------------------------------------------------

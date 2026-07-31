@@ -42,6 +42,7 @@ class Concept(Base):
         ForeignKey("skills.id"),
         nullable=False
     )
+    
 
     name = Column(String(100), nullable=False)
 
@@ -87,3 +88,5 @@ class Concept(Base):
     back_populates="concept",
     cascade="all, delete-orphan"
     )
+    
+    

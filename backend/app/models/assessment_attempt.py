@@ -76,3 +76,8 @@ class AssessmentAttempt(Base):
         back_populates="attempt",
         cascade="all, delete-orphan"
     )
+    competency_scores = relationship(
+    "CompetencyScore",
+    back_populates="assessment_attempt",
+    cascade="all, delete-orphan"
+)
