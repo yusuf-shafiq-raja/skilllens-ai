@@ -1,27 +1,26 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class CompetencyScoreResponse(BaseModel):
+
     id: int
 
     competency_id: int
 
-    questions_attempted: int
+    assessment_attempt_id: int
+
+    score: float
+
+    total_questions: int
 
     correct_answers: int
 
-    raw_score: float
-
     percentage: float
-
-    level: str
-
-    assessment_attempt_id: int
 
     created_at: datetime
 
-    model_config = {
-        "from_attributes": True
-    }
+    model_config = ConfigDict(
+        from_attributes=True
+    )

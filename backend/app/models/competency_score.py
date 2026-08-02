@@ -2,7 +2,6 @@ from sqlalchemy import (
     Column,
     Integer,
     Float,
-    String,
     ForeignKey,
     DateTime
 )
@@ -35,7 +34,13 @@ class CompetencyScore(Base):
         nullable=False
     )
 
-    questions_attempted = Column(
+    score = Column(
+        Float,
+        default=0,
+        nullable=False
+    )
+
+    total_questions = Column(
         Integer,
         default=0,
         nullable=False
@@ -47,20 +52,9 @@ class CompetencyScore(Base):
         nullable=False
     )
 
-    raw_score = Column(
-        Float,
-        default=0,
-        nullable=False
-    )
-
     percentage = Column(
         Float,
         default=0,
-        nullable=False
-    )
-
-    level = Column(
-        String(20),
         nullable=False
     )
 
@@ -68,8 +62,6 @@ class CompetencyScore(Base):
         DateTime(timezone=True),
         server_default=func.now()
     )
-
-    # Relationships
 
     owner = relationship(
         "User",

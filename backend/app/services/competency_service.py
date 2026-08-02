@@ -7,22 +7,6 @@ from app.models.question_competency import QuestionCompetency
 from app.models.competency_score import CompetencyScore
 
 
-# ---------------------------------------------------------
-# Competency Level
-# ---------------------------------------------------------
-
-def get_competency_level(percentage: float) -> str:
-    if percentage >= 90:
-        return "Expert"
-
-    elif percentage >= 70:
-        return "Advanced"
-
-    elif percentage >= 40:
-        return "Intermediate"
-
-    return "Beginner"
-
 
 # ---------------------------------------------------------
 # Calculate Competency Scores
@@ -152,30 +136,25 @@ def calculate_competency_scores(
                 ) * 100,
                 2
             )
+            competency_score = CompetencyScore(
 
-        competency_score = CompetencyScore(
+    user_id=attempt.user_id,
 
-            user_id=attempt.user_id,
+    competency_id=competency_id,
 
-            competency_id=competency_id,
+    assessment_attempt_id=attempt.id,
 
-            assessment_attempt_id=attempt.id,
+    score=round(
+        data["earned_weight"],
+        2
+    ),
 
-            questions_attempted=data["questions_attempted"],
+    total_questions=data["questions_attempted"],
 
-            correct_answers=data["correct_answers"],
+    correct_answers=data["correct_answers"],
 
-            raw_score=round(
-                data["earned_weight"],
-                2
-            ),
-
-            percentage=percentage,
-
-            level=get_competency_level(
-                percentage
-            )
-        )
+    percentage=percentage
+)
 
         db.add(
             competency_score

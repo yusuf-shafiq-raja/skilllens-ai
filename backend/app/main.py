@@ -19,6 +19,7 @@ from app.routes.question_competency import router as question_competency_router
 from app.routes.competency_score import router as competency_score_router
 from app.routes.roadmap import router as roadmap_router
 from app.routes.resume import router as resume_router
+from app.routes.dashboard import router as dashboard_router
 
 
 # Create Tables
@@ -44,6 +45,7 @@ app.include_router(question_competency_router)
 app.include_router(competency_score_router)
 app.include_router(roadmap_router)
 app.include_router(resume_router)
+app.include_router(dashboard_router)
 
 @app.get("/")
 def root():
