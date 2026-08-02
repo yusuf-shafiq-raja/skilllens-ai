@@ -23,7 +23,19 @@ from app.services.assessment_attempt_service import (
     get_result,
     get_attempt_history
 )
-
+from app.schemas.assessment_attempt import (
+    StartAssessmentResponse,
+    AssessmentResultResponse,
+    AssessmentAttemptDetailsResponse
+)
+from app.services.assessment_attempt_service import (
+    start_assessment,
+    submit_answer,
+    submit_assessment,
+    get_result,
+    get_attempt_history,
+    get_attempt_details
+)
 router = APIRouter(
     prefix="/assessment-attempts",
     tags=["Assessment Attempts"]
@@ -78,7 +90,27 @@ def answer(
             detail=str(e)
         )
 
+@router.get(
+    "/{attempt_id}/details",
+    response_model=AssessmentAttemptDetailsResponse
+)
+def details(
+    attempt_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    try:
+        return get_attempt_details(
+            db,
+            attempt_id,
+            current_user
+        )
 
+    except ValueError as e:
+        raise HTTPException(
+            status_code=404,
+            detail=str(e)
+        )
 @router.post("/{attempt_id}/submit")
 def submit(
     attempt_id: int,

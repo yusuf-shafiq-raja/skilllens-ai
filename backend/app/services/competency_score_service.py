@@ -56,7 +56,7 @@ def get_latest_competency_scores(
     )
 
     if not latest_attempt:
-        raise ValueError("No completed assessment found.")
+        return []
 
     return (
         db.query(CompetencyScore)

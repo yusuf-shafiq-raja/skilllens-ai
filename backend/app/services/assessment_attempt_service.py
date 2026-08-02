@@ -90,7 +90,72 @@ def start_assessment(
         "questions": questions
     }
 
+# ---------------------------------------------------------
+# Get Assessment Attempt Details
+# ---------------------------------------------------------
 
+def get_attempt_details(
+    db: Session,
+    attempt_id: int,
+    current_user: User
+):
+
+    attempt = (
+        db.query(AssessmentAttempt)
+        .filter(
+            AssessmentAttempt.id == attempt_id,
+            AssessmentAttempt.user_id == current_user.id
+        )
+        .first()
+    )
+
+    if not attempt:
+        raise ValueError("Attempt not found.")
+
+    assessment = (
+        db.query(Assessment)
+        .filter(
+            Assessment.id == attempt.assessment_id
+        )
+        .first()
+    )
+
+    links = (
+        db.query(AssessmentQuestion)
+        .filter(
+            AssessmentQuestion.assessment_id == assessment.id
+        )
+        .all()
+    )
+
+    question_ids = [
+        link.question_id
+        for link in links
+    ]
+
+    questions = []
+
+    if question_ids:
+
+        questions = (
+            db.query(Question)
+            .filter(
+                Question.id.in_(question_ids)
+            )
+            .all()
+        )
+
+    return {
+
+        "attempt_id": attempt.id,
+
+        "started_at": attempt.started_at,
+
+        "assessment": assessment,
+
+        "questions": questions
+
+    }
 # ---------------------------------------------------------
 # Submit / Update Answer
 # ---------------------------------------------------------
