@@ -3,9 +3,18 @@ from typing import List
 from pydantic import BaseModel
 
 
-# ---------------------------------------------------------
-# Resume Analysis Response
-# ---------------------------------------------------------
+class RecommendedAssessment(BaseModel):
+
+    id: int
+
+    title: str
+
+    description: str
+
+    duration_minutes: int
+
+    passing_score: int
+
 
 class ResumeAnalysisResponse(BaseModel):
 
@@ -20,3 +29,5 @@ class ResumeAnalysisResponse(BaseModel):
     readiness_score: float
 
     extracted_text: str
+
+    recommended_assessments: List[RecommendedAssessment]

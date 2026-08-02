@@ -1,8 +1,42 @@
 from sqlalchemy.orm import Session
 
+from app.models.competency import Competency
 from app.models.competency_score import CompetencyScore
 from app.models.assessment_attempt import AssessmentAttempt
 from app.models.user import User
+
+
+# ---------------------------------------------------------
+# Helper
+# ---------------------------------------------------------
+
+def format_scores(scores):
+
+    return [
+
+        {
+            "id": score.id,
+
+            "competency_id": score.competency_id,
+
+            "competency_name": score.competency.name,
+
+            "assessment_attempt_id": score.assessment_attempt_id,
+
+            "score": score.score,
+
+            "total_questions": score.total_questions,
+
+            "correct_answers": score.correct_answers,
+
+            "percentage": score.percentage,
+
+            "created_at": score.created_at,
+        }
+
+        for score in scores
+
+    ]
 
 
 # ---------------------------------------------------------
@@ -14,6 +48,7 @@ def get_competency_scores_by_attempt(
     attempt_id: int,
     current_user: User
 ):
+
     attempt = (
         db.query(AssessmentAttempt)
         .filter(
@@ -26,7 +61,7 @@ def get_competency_scores_by_attempt(
     if not attempt:
         raise ValueError("Assessment attempt not found.")
 
-    return (
+    scores = (
         db.query(CompetencyScore)
         .filter(
             CompetencyScore.assessment_attempt_id == attempt.id
@@ -34,15 +69,18 @@ def get_competency_scores_by_attempt(
         .all()
     )
 
+    return format_scores(scores)
+
 
 # ---------------------------------------------------------
-# Get Latest Competency Scores
+# Latest Competency Scores
 # ---------------------------------------------------------
 
 def get_latest_competency_scores(
     db: Session,
     current_user: User
 ):
+
     latest_attempt = (
         db.query(AssessmentAttempt)
         .filter(
@@ -58,7 +96,7 @@ def get_latest_competency_scores(
     if not latest_attempt:
         return []
 
-    return (
+    scores = (
         db.query(CompetencyScore)
         .filter(
             CompetencyScore.assessment_attempt_id == latest_attempt.id
@@ -66,16 +104,19 @@ def get_latest_competency_scores(
         .all()
     )
 
+    return format_scores(scores)
+
 
 # ---------------------------------------------------------
-# Get Competency Score History
+# Competency Score History
 # ---------------------------------------------------------
 
 def get_competency_score_history(
     db: Session,
     current_user: User
 ):
-    return (
+
+    scores = (
         db.query(CompetencyScore)
         .filter(
             CompetencyScore.user_id == current_user.id
@@ -85,3 +126,5 @@ def get_competency_score_history(
         )
         .all()
     )
+
+    return format_scores(scores)

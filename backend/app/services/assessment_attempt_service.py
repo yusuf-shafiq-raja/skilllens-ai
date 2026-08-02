@@ -8,7 +8,7 @@ from app.models.assessment_answer import AssessmentAnswer
 from app.models.assessment_question import AssessmentQuestion
 from app.models.question import Question
 from app.models.user import User
-from app.services.competency_service import calculate_competency_scores
+from app.services.competency_engine import calculate_competency_scores
 
 # ---------------------------------------------------------
 # Start Assessment

@@ -16,12 +16,14 @@ from app.routes.question import router as question_router
 from app.routes.assessment import router as assessment_router
 from app.routes.assessment_attempt import router as assessment_attempt_router
 from app.routes.question_competency import router as question_competency_router
-#from app.routes.competency import router as competency_router
+from app.routes.competency import router as competency_router
 from app.routes.competency_score import router as competency_score_router
 from app.routes.roadmap import router as roadmap_router
 from app.routes.resume import router as resume_router
 from app.routes.dashboard import router as dashboard_router
-
+from app.models.roadmap import Roadmap
+from app.routes.roadmap import router as roadmap_router
+from app.routes.learning_roadmap import router as learning_roadmap_router
 
 # Create Tables
 Base.metadata.create_all(bind=engine)
@@ -55,11 +57,13 @@ app.include_router(question_router)
 app.include_router(assessment_router)
 app.include_router(assessment_attempt_router)
 app.include_router(question_competency_router)
-#app.include_router(competency_router)
+app.include_router(competency_router)
 app.include_router(competency_score_router)
 app.include_router(roadmap_router)
 app.include_router(resume_router)
 app.include_router(dashboard_router)
+app.include_router(roadmap_router)
+app.include_router(learning_roadmap_router)
 
 @app.get("/")
 def root():

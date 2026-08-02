@@ -1,151 +1,118 @@
 from sqlalchemy.orm import Session
 
-from app.models.competency_score import CompetencyScore
+from app.models.roadmap import Roadmap
 from app.models.competency import Competency
-from app.models.concept import Concept
-from app.models.assessment_attempt import AssessmentAttempt
 from app.models.user import User
 
-
-# ---------------------------------------------------------
-# Estimated Learning Hours
-# ---------------------------------------------------------
-
-def estimate_learning_hours(percentage: float) -> int:
-
-    if percentage >= 90:
-        return 1
-
-    elif percentage >= 70:
-        return 3
-
-    elif percentage >= 40:
-        return 6
-
-    return 10
+from app.schemas.roadmap import (
+    RoadmapCreate,
+    RoadmapUpdate
+)
 
 
-# ---------------------------------------------------------
-# Latest Roadmap
-# ---------------------------------------------------------
-
-def get_latest_roadmap(
+def create_roadmap(
     db: Session,
+    roadmap: RoadmapCreate,
     current_user: User
 ):
 
-    latest_attempt = (
-        db.query(AssessmentAttempt)
+    competency = (
+        db.query(Competency)
         .filter(
-            AssessmentAttempt.user_id == current_user.id,
-            AssessmentAttempt.is_completed == True
-        )
-        .order_by(
-            AssessmentAttempt.submitted_at.desc()
+            Competency.id == roadmap.competency_id
         )
         .first()
     )
 
-    if latest_attempt is None:
-        raise ValueError(
-            "No completed assessment found."
-        )
+    if not competency:
+        raise ValueError("Competency not found.")
 
-    return get_roadmap_by_attempt(
+    new_roadmap = Roadmap(**roadmap.model_dump())
+
+    db.add(new_roadmap)
+
+    db.commit()
+
+    db.refresh(new_roadmap)
+
+    return new_roadmap
+
+
+def get_all_roadmaps(
+    db: Session
+):
+
+    return db.query(
+        Roadmap
+    ).all()
+
+
+def get_roadmap(
+    db: Session,
+    roadmap_id: int
+):
+
+    return (
+        db.query(Roadmap)
+        .filter(
+            Roadmap.id == roadmap_id
+        )
+        .first()
+    )
+
+
+def update_roadmap(
+    db: Session,
+    roadmap_id: int,
+    roadmap: RoadmapUpdate
+):
+
+    existing = get_roadmap(
         db,
-        latest_attempt.id,
-        current_user
+        roadmap_id
     )
 
+    if not existing:
+        raise ValueError(
+            "Roadmap not found."
+        )
 
-# ---------------------------------------------------------
-# Roadmap By Attempt
-# ---------------------------------------------------------
+    for key, value in roadmap.model_dump(
+        exclude_unset=True
+    ).items():
 
-def get_roadmap_by_attempt(
+        setattr(
+            existing,
+            key,
+            value
+        )
+
+    db.commit()
+
+    db.refresh(existing)
+
+    return existing
+
+
+def delete_roadmap(
     db: Session,
-    attempt_id: int,
-    current_user: User
+    roadmap_id: int
 ):
 
-    attempt = (
-        db.query(AssessmentAttempt)
-        .filter(
-            AssessmentAttempt.id == attempt_id,
-            AssessmentAttempt.user_id == current_user.id
-        )
-        .first()
+    roadmap = get_roadmap(
+        db,
+        roadmap_id
     )
 
-    if attempt is None:
+    if not roadmap:
         raise ValueError(
-            "Assessment attempt not found."
+            "Roadmap not found."
         )
 
-    scores = (
-        db.query(CompetencyScore)
-        .filter(
-            CompetencyScore.assessment_attempt_id == attempt.id
-        )
-        .order_by(
-            CompetencyScore.percentage.asc()
-        )
-        .all()
-    )
+    db.delete(roadmap)
 
-    roadmap = []
-
-    priority = 1
-
-    for score in scores:
-
-        competency = (
-            db.query(Competency)
-            .filter(
-                Competency.id == score.competency_id
-            )
-            .first()
-        )
-
-        if competency is None:
-            continue
-
-        concepts = (
-            db.query(Concept)
-            .filter(
-                Concept.skill_id == competency.skill_id
-            )
-            .order_by(
-                Concept.learning_order.asc()
-            )
-            .all()
-        )
-
-        roadmap.append(
-
-            {
-                "competency": competency.name,
-
-                "current_level": score.level,
-
-                "percentage": score.percentage,
-
-                "priority": priority,
-
-                "estimated_hours": estimate_learning_hours(
-                    score.percentage
-                ),
-
-                "recommended_concepts": [
-                    concept.name
-                    for concept in concepts
-                ]
-            }
-
-        )
-
-        priority += 1
+    db.commit()
 
     return {
-        "roadmap": roadmap
+        "message": "Roadmap deleted successfully."
     }

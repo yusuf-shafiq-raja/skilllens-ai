@@ -46,3 +46,8 @@ class Competency(Base):
         back_populates="competency",
         cascade="all, delete-orphan"
     )
+    roadmaps = relationship(
+    "Roadmap",
+    back_populates="competency",
+    cascade="all, delete-orphan"
+)

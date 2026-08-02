@@ -9,6 +9,8 @@ class CompetencyScoreResponse(BaseModel):
 
     competency_id: int
 
+    competency_name: str
+
     assessment_attempt_id: int
 
     score: float
