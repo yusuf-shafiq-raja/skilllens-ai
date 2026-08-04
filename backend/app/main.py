@@ -24,7 +24,9 @@ from app.routes.dashboard import router as dashboard_router
 from app.models.roadmap import Roadmap
 from app.routes.roadmap import router as roadmap_router
 from app.routes.learning_roadmap import router as learning_roadmap_router
-
+from app.routes.placement_readiness import (
+    router as placement_readiness_router
+)
 # Create Tables
 Base.metadata.create_all(bind=engine)
 
@@ -64,6 +66,7 @@ app.include_router(resume_router)
 app.include_router(dashboard_router)
 app.include_router(roadmap_router)
 app.include_router(learning_roadmap_router)
+app.include_router(placement_readiness_router)
 
 @app.get("/")
 def root():

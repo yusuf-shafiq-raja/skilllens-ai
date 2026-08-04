@@ -19,6 +19,8 @@ import Competency from "./pages/Competency/Competency";
 import Roadmap from "./pages/Roadmap/Roadmap";
 import Resume from "./pages/Resume/Resume";
 
+import PlacementReadiness from "./pages/PlacementReadiness/PlacementReadiness";
+
 function App() {
   return (
     <BrowserRouter>
@@ -112,6 +114,10 @@ function App() {
             path="*"
             element={<Navigate to="/" replace />}
           />
+          <Route
+    path="/placement-readiness"
+    element={<PlacementReadiness />}
+/>
 
         </Routes>
 

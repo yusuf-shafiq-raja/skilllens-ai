@@ -6,7 +6,12 @@ import Card from "../../components/Card/Card";
 import Button from "../../components/Button/Button";
 
 import { uploadResume } from "../../services/resumeService";
+import {
+  generatePlacementReadiness
+} from "../../services/placementReadinessService";
 import { startAssessment } from "../../services/assessmentService";
+
+
 
 function Resume() {
 
@@ -34,7 +39,12 @@ function Resume() {
 
       const data = await uploadResume(file);
 
-      setResult(data);
+setResult(data);
+
+// Generate Placement Readiness
+await generatePlacementReadiness(
+  data.readiness_score
+);
 
     }
 

@@ -19,7 +19,9 @@ function AssessmentResult() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
     loadResult();
+
   }, []);
 
   async function loadResult() {
@@ -30,11 +32,15 @@ function AssessmentResult() {
 
       setResult(data);
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
       console.error(error);
 
-    } finally {
+    }
+
+    finally {
 
       setLoading(false);
 
@@ -45,11 +51,17 @@ function AssessmentResult() {
   if (loading) {
 
     return (
+
       <MainLayout>
+
         <h2 className="text-2xl font-bold">
+
           Loading Result...
+
         </h2>
+
       </MainLayout>
+
     );
 
   }
@@ -57,11 +69,17 @@ function AssessmentResult() {
   if (!result) {
 
     return (
+
       <MainLayout>
+
         <h2 className="text-2xl font-bold">
+
           Result not found.
+
         </h2>
+
       </MainLayout>
+
     );
 
   }
@@ -70,49 +88,72 @@ function AssessmentResult() {
 
     <MainLayout>
 
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-5xl mx-auto">
 
         <Card>
 
           <h1 className="text-4xl font-bold mb-8">
+
             Assessment Completed 🎉
+
           </h1>
 
           <div className="grid grid-cols-2 gap-6">
 
             <div className="bg-slate-100 rounded-xl p-5">
+
               <p className="text-gray-500">
+
                 Score
+
               </p>
 
               <h2 className="text-3xl font-bold mt-2">
+
                 {result.score}
+
               </h2>
+
             </div>
 
             <div className="bg-slate-100 rounded-xl p-5">
+
               <p className="text-gray-500">
+
                 Total Marks
+
               </p>
 
               <h2 className="text-3xl font-bold mt-2">
+
                 {result.total_marks}
+
               </h2>
+
             </div>
 
             <div className="bg-slate-100 rounded-xl p-5">
+
               <p className="text-gray-500">
+
                 Percentage
+
               </p>
 
-              <h2 className="text-3xl font-bold mt-2">
+              <h2 className="text-3xl font-bold mt-2 text-blue-600">
+
                 {result.percentage}%
+
               </h2>
+
             </div>
 
             <div className="bg-slate-100 rounded-xl p-5">
+
               <p className="text-gray-500">
+
                 Status
+
               </p>
 
               <h2
@@ -122,18 +163,63 @@ function AssessmentResult() {
                     : "text-red-600"
                 }`}
               >
+
                 {result.status}
+
               </h2>
+
             </div>
+
+          </div>
+
+          <hr className="my-10" />
+
+          <h2 className="text-2xl font-bold mb-6">
+
+            Continue Your Learning
+
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+            <Button
+              onClick={() => navigate("/competency")}
+            >
+
+              View Competency
+
+            </Button>
+
+            <Button
+              onClick={() => navigate("/roadmap")}
+            >
+
+              View Learning Roadmap
+
+            </Button>
+
+            <Button
+              onClick={() =>
+                navigate("/placement-readiness")
+              }
+            >
+
+              Placement Readiness
+
+            </Button>
 
           </div>
 
           <div className="mt-10">
 
             <Button
-              onClick={() => navigate("/dashboard")}
+              onClick={() =>
+                navigate("/dashboard")
+              }
             >
+
               Return to Dashboard
+
             </Button>
 
           </div>
