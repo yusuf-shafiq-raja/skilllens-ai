@@ -349,12 +349,67 @@ def submit_assessment(
     # Calculate Percentage
     # ----------------------------------------
 
+        # ----------------------------------------
+    # Calculate Result
+    # ----------------------------------------
+
+    score = 0
+
+    total_marks = len(questions)
+
+    correct_answers = 0
+
+    wrong_answers = 0
+
+    for answer in answers:
+
+        question = question_map.get(
+            answer.question_id
+        )
+
+        if question is None:
+            continue
+
+        if (
+            answer.selected_answer.upper()
+            ==
+            question.correct_answer.value.upper()
+        ):
+
+            answer.is_correct = True
+
+            answer.marks_obtained = 1
+
+            score += 1
+
+            correct_answers += 1
+
+        else:
+
+            answer.is_correct = False
+
+            answer.marks_obtained = 0
+
+            wrong_answers += 1
+
+    unanswered_questions = max(
+        0,
+        len(questions) - len(answers)
+    )
+
+    # ----------------------------------------
+    # Calculate Percentage
+    # ----------------------------------------
+
     if total_marks > 0:
+
         percentage = round(
             (score / total_marks) * 100,
             2
         )
+
     else:
+
         percentage = 0
 
     # ----------------------------------------
