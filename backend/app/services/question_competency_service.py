@@ -6,32 +6,35 @@ from app.models.question_competency import QuestionCompetency
 
 from app.schemas.question_competency import (
     QuestionCompetencyCreate,
-    QuestionCompetencyUpdate
+    QuestionCompetencyUpdate,
 )
 
 
-def create_question_competency(
-    db: Session,
-    competency_data: QuestionCompetencyCreate
-):
-    question = db.query(Question).filter(
-        Question.id == competency_data.question_id
-    ).first()
+def create_question_competency(db: Session, competency_data: QuestionCompetencyCreate):
+    question = (
+        db.query(Question).filter(Question.id == competency_data.question_id).first()
+    )
 
     if not question:
         raise ValueError("Question not found.")
 
-    competency = db.query(Competency).filter(
-        Competency.id == competency_data.competency_id
-    ).first()
+    competency = (
+        db.query(Competency)
+        .filter(Competency.id == competency_data.competency_id)
+        .first()
+    )
 
     if not competency:
         raise ValueError("Competency not found.")
 
-    existing = db.query(QuestionCompetency).filter(
-        QuestionCompetency.question_id == competency_data.question_id,
-        QuestionCompetency.competency_id == competency_data.competency_id
-    ).first()
+    existing = (
+        db.query(QuestionCompetency)
+        .filter(
+            QuestionCompetency.question_id == competency_data.question_id,
+            QuestionCompetency.competency_id == competency_data.competency_id,
+        )
+        .first()
+    )
 
     if existing:
         raise ValueError("Mapping already exists.")
@@ -49,13 +52,10 @@ def get_all_question_competencies(db: Session):
     return db.query(QuestionCompetency).all()
 
 
-def get_question_competency(
-    mapping_id: int,
-    db: Session
-):
-    mapping = db.query(QuestionCompetency).filter(
-        QuestionCompetency.id == mapping_id
-    ).first()
+def get_question_competency(mapping_id: int, db: Session):
+    mapping = (
+        db.query(QuestionCompetency).filter(QuestionCompetency.id == mapping_id).first()
+    )
 
     if not mapping:
         raise ValueError("Mapping not found.")
@@ -64,13 +64,11 @@ def get_question_competency(
 
 
 def update_question_competency(
-    mapping_id: int,
-    competency_data: QuestionCompetencyUpdate,
-    db: Session
+    mapping_id: int, competency_data: QuestionCompetencyUpdate, db: Session
 ):
-    mapping = db.query(QuestionCompetency).filter(
-        QuestionCompetency.id == mapping_id
-    ).first()
+    mapping = (
+        db.query(QuestionCompetency).filter(QuestionCompetency.id == mapping_id).first()
+    )
 
     if not mapping:
         raise ValueError("Mapping not found.")
@@ -86,13 +84,10 @@ def update_question_competency(
     return mapping
 
 
-def delete_question_competency(
-    mapping_id: int,
-    db: Session
-):
-    mapping = db.query(QuestionCompetency).filter(
-        QuestionCompetency.id == mapping_id
-    ).first()
+def delete_question_competency(mapping_id: int, db: Session):
+    mapping = (
+        db.query(QuestionCompetency).filter(QuestionCompetency.id == mapping_id).first()
+    )
 
     if not mapping:
         raise ValueError("Mapping not found.")
@@ -100,6 +95,4 @@ def delete_question_competency(
     db.delete(mapping)
     db.commit()
 
-    return {
-        "message": "Question competency mapping deleted successfully."
-    }
+    return {"message": "Question competency mapping deleted successfully."}

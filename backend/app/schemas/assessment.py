@@ -6,10 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 class AssessmentBase(BaseModel):
     title: str = Field(..., min_length=3, max_length=150)
 
-    description: str | None = Field(
-        default=None,
-        max_length=500
-    )
+    description: str | None = Field(default=None, max_length=500)
 
     skill_id: int
 

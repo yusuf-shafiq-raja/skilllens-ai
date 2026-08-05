@@ -3,10 +3,10 @@ from datetime import datetime
 from pydantic import BaseModel
 from pydantic import ConfigDict
 
-
 # ---------------------------------------------------------
 # Placement Readiness Response
 # ---------------------------------------------------------
+
 
 class PlacementReadinessResponse(BaseModel):
 
@@ -28,6 +28,4 @@ class PlacementReadinessResponse(BaseModel):
 
     created_at: datetime
 
-    model_config = ConfigDict(
-        from_attributes=True
-    )
+    model_config = ConfigDict(from_attributes=True)

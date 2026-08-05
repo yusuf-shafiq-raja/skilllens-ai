@@ -6,18 +6,11 @@ from app.models.user import User
 from app.schemas.concept import ConceptCreate, ConceptUpdate
 
 
-def create_concept(
-    db: Session,
-    concept: ConceptCreate,
-    current_user: User
-):
+def create_concept(db: Session, concept: ConceptCreate, current_user: User):
     # Check whether the skill belongs to the current user
     skill = (
         db.query(Skill)
-        .filter(
-            Skill.id == concept.skill_id,
-            Skill.user_id == current_user.id
-        )
+        .filter(Skill.id == concept.skill_id, Skill.user_id == current_user.id)
         .first()
     )
 
@@ -30,7 +23,7 @@ def create_concept(
         .filter(
             Concept.user_id == current_user.id,
             Concept.skill_id == concept.skill_id,
-            Concept.name == concept.name
+            Concept.name == concept.name,
         )
         .first()
     )
@@ -45,7 +38,7 @@ def create_concept(
         description=concept.description,
         difficulty=concept.difficulty,
         estimated_time=concept.estimated_time,
-        learning_order=concept.learning_order
+        learning_order=concept.learning_order,
     )
 
     db.add(new_concept)
@@ -55,67 +48,38 @@ def create_concept(
     return new_concept
 
 
-def get_all_concepts(
-    db: Session,
-    current_user: User
-):
+def get_all_concepts(db: Session, current_user: User):
     return (
         db.query(Concept)
-        .filter(
-            Concept.user_id == current_user.id
-        )
-        .order_by(
-            Concept.learning_order
-        )
+        .filter(Concept.user_id == current_user.id)
+        .order_by(Concept.learning_order)
         .all()
     )
 
 
-def get_concepts_by_skill(
-    db: Session,
-    skill_id: int,
-    current_user: User
-):
+def get_concepts_by_skill(db: Session, skill_id: int, current_user: User):
     return (
         db.query(Concept)
-        .filter(
-            Concept.user_id == current_user.id,
-            Concept.skill_id == skill_id
-        )
-        .order_by(
-            Concept.learning_order
-        )
+        .filter(Concept.user_id == current_user.id, Concept.skill_id == skill_id)
+        .order_by(Concept.learning_order)
         .all()
     )
 
 
-def get_concept_by_id(
-    db: Session,
-    concept_id: int,
-    current_user: User
-):
+def get_concept_by_id(db: Session, concept_id: int, current_user: User):
     return (
         db.query(Concept)
-        .filter(
-            Concept.id == concept_id,
-            Concept.user_id == current_user.id
-        )
+        .filter(Concept.id == concept_id, Concept.user_id == current_user.id)
         .first()
     )
 
 
 def update_concept(
-    db: Session,
-    concept_id: int,
-    concept: ConceptUpdate,
-    current_user: User
+    db: Session, concept_id: int, concept: ConceptUpdate, current_user: User
 ):
     existing_concept = (
         db.query(Concept)
-        .filter(
-            Concept.id == concept_id,
-            Concept.user_id == current_user.id
-        )
+        .filter(Concept.id == concept_id, Concept.user_id == current_user.id)
         .first()
     )
 
@@ -130,7 +94,7 @@ def update_concept(
                 Concept.user_id == current_user.id,
                 Concept.skill_id == existing_concept.skill_id,
                 Concept.name == concept.name,
-                Concept.id != concept_id
+                Concept.id != concept_id,
             )
             .first()
         )
@@ -149,17 +113,10 @@ def update_concept(
     return existing_concept
 
 
-def delete_concept(
-    db: Session,
-    concept_id: int,
-    current_user: User
-):
+def delete_concept(db: Session, concept_id: int, current_user: User):
     existing_concept = (
         db.query(Concept)
-        .filter(
-            Concept.id == concept_id,
-            Concept.user_id == current_user.id
-        )
+        .filter(Concept.id == concept_id, Concept.user_id == current_user.id)
         .first()
     )
 
@@ -169,6 +126,4 @@ def delete_concept(
     db.delete(existing_concept)
     db.commit()
 
-    return {
-        "message": "Concept deleted successfully."
-    }
+    return {"message": "Concept deleted successfully."}

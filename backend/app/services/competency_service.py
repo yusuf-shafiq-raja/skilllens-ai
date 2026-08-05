@@ -4,28 +4,18 @@ from app.models.competency import Competency
 from app.models.skill import Skill
 from app.models.user import User
 
-from app.schemas.competency import (
-    CompetencyCreate,
-    CompetencyUpdate
-)
-
+from app.schemas.competency import CompetencyCreate, CompetencyUpdate
 
 # ---------------------------------------------------------
 # Create Competency
 # ---------------------------------------------------------
 
-def create_competency(
-    db: Session,
-    competency: CompetencyCreate,
-    current_user: User
-):
+
+def create_competency(db: Session, competency: CompetencyCreate, current_user: User):
 
     skill = (
         db.query(Skill)
-        .filter(
-            Skill.id == competency.skill_id,
-            Skill.user_id == current_user.id
-        )
+        .filter(Skill.id == competency.skill_id, Skill.user_id == current_user.id)
         .first()
     )
 
@@ -36,7 +26,7 @@ def create_competency(
         db.query(Competency)
         .filter(
             Competency.skill_id == competency.skill_id,
-            Competency.name == competency.name
+            Competency.name == competency.name,
         )
         .first()
     )
@@ -48,7 +38,7 @@ def create_competency(
         skill_id=competency.skill_id,
         name=competency.name,
         description=competency.description,
-        is_active=competency.is_active
+        is_active=competency.is_active,
     )
 
     db.add(new_competency)
@@ -62,18 +52,11 @@ def create_competency(
 # Get All Competencies
 # ---------------------------------------------------------
 
-def get_all_competencies(
-    db: Session,
-    current_user: User
-):
+
+def get_all_competencies(db: Session, current_user: User):
 
     return (
-        db.query(Competency)
-        .join(Skill)
-        .filter(
-            Skill.user_id == current_user.id
-        )
-        .all()
+        db.query(Competency).join(Skill).filter(Skill.user_id == current_user.id).all()
     )
 
 
@@ -81,19 +64,13 @@ def get_all_competencies(
 # Get Competency By ID
 # ---------------------------------------------------------
 
-def get_competency_by_id(
-    db: Session,
-    competency_id: int,
-    current_user: User
-):
+
+def get_competency_by_id(db: Session, competency_id: int, current_user: User):
 
     return (
         db.query(Competency)
         .join(Skill)
-        .filter(
-            Competency.id == competency_id,
-            Skill.user_id == current_user.id
-        )
+        .filter(Competency.id == competency_id, Skill.user_id == current_user.id)
         .first()
     )
 
@@ -102,37 +79,24 @@ def get_competency_by_id(
 # Update Competency
 # ---------------------------------------------------------
 
+
 def update_competency(
-    db: Session,
-    competency_id: int,
-    competency: CompetencyUpdate,
-    current_user: User
+    db: Session, competency_id: int, competency: CompetencyUpdate, current_user: User
 ):
 
-    existing = get_competency_by_id(
-        db,
-        competency_id,
-        current_user
-    )
+    existing = get_competency_by_id(db, competency_id, current_user)
 
     if not existing:
         return None
 
-    update_data = competency.model_dump(
-        exclude_unset=True
-    )
+    update_data = competency.model_dump(exclude_unset=True)
 
-    if (
-        "skill_id" in update_data
-        and
-        update_data["skill_id"] != existing.skill_id
-    ):
+    if "skill_id" in update_data and update_data["skill_id"] != existing.skill_id:
 
         skill = (
             db.query(Skill)
             .filter(
-                Skill.id == update_data["skill_id"],
-                Skill.user_id == current_user.id
+                Skill.id == update_data["skill_id"], Skill.user_id == current_user.id
             )
             .first()
         )
@@ -153,17 +117,10 @@ def update_competency(
 # Delete Competency
 # ---------------------------------------------------------
 
-def delete_competency(
-    db: Session,
-    competency_id: int,
-    current_user: User
-):
 
-    competency = get_competency_by_id(
-        db,
-        competency_id,
-        current_user
-    )
+def delete_competency(db: Session, competency_id: int, current_user: User):
+
+    competency = get_competency_by_id(db, competency_id, current_user)
 
     if not competency:
         return None

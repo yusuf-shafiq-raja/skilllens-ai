@@ -6,18 +6,11 @@ from app.models.user import User
 from app.schemas.assessment import AssessmentCreate, AssessmentUpdate
 
 
-def create_assessment(
-    db: Session,
-    assessment: AssessmentCreate,
-    current_user: User
-):
+def create_assessment(db: Session, assessment: AssessmentCreate, current_user: User):
     # Verify skill belongs to current user
     skill = (
         db.query(Skill)
-        .filter(
-            Skill.id == assessment.skill_id,
-            Skill.user_id == current_user.id
-        )
+        .filter(Skill.id == assessment.skill_id, Skill.user_id == current_user.id)
         .first()
     )
 
@@ -28,8 +21,7 @@ def create_assessment(
     existing_assessment = (
         db.query(Assessment)
         .filter(
-            Assessment.user_id == current_user.id,
-            Assessment.title == assessment.title
+            Assessment.user_id == current_user.id, Assessment.title == assessment.title
         )
         .first()
     )
@@ -54,46 +46,24 @@ def create_assessment(
     return new_assessment
 
 
-def get_all_assessments(
-    db: Session,
-    current_user: User
-):
-    return (
-        db.query(Assessment)
-        .filter(
-            Assessment.user_id == current_user.id
-        )
-        .all()
-    )
+def get_all_assessments(db: Session, current_user: User):
+    return db.query(Assessment).filter(Assessment.user_id == current_user.id).all()
 
 
-def get_assessment_by_id(
-    db: Session,
-    assessment_id: int,
-    current_user: User
-):
+def get_assessment_by_id(db: Session, assessment_id: int, current_user: User):
     return (
         db.query(Assessment)
-        .filter(
-            Assessment.id == assessment_id,
-            Assessment.user_id == current_user.id
-        )
+        .filter(Assessment.id == assessment_id, Assessment.user_id == current_user.id)
         .first()
     )
 
 
 def update_assessment(
-    db: Session,
-    assessment_id: int,
-    assessment: AssessmentUpdate,
-    current_user: User
+    db: Session, assessment_id: int, assessment: AssessmentUpdate, current_user: User
 ):
     existing_assessment = (
         db.query(Assessment)
-        .filter(
-            Assessment.id == assessment_id,
-            Assessment.user_id == current_user.id
-        )
+        .filter(Assessment.id == assessment_id, Assessment.user_id == current_user.id)
         .first()
     )
 
@@ -107,8 +77,7 @@ def update_assessment(
         skill = (
             db.query(Skill)
             .filter(
-                Skill.id == update_data["skill_id"],
-                Skill.user_id == current_user.id
+                Skill.id == update_data["skill_id"], Skill.user_id == current_user.id
             )
             .first()
         )
@@ -123,7 +92,7 @@ def update_assessment(
             .filter(
                 Assessment.user_id == current_user.id,
                 Assessment.title == update_data["title"],
-                Assessment.id != assessment_id
+                Assessment.id != assessment_id,
             )
             .first()
         )
@@ -140,17 +109,10 @@ def update_assessment(
     return existing_assessment
 
 
-def delete_assessment(
-    db: Session,
-    assessment_id: int,
-    current_user: User
-):
+def delete_assessment(db: Session, assessment_id: int, current_user: User):
     existing_assessment = (
         db.query(Assessment)
-        .filter(
-            Assessment.id == assessment_id,
-            Assessment.user_id == current_user.id
-        )
+        .filter(Assessment.id == assessment_id, Assessment.user_id == current_user.id)
         .first()
     )
 
@@ -160,6 +122,4 @@ def delete_assessment(
     db.delete(existing_assessment)
     db.commit()
 
-    return {
-        "message": "Assessment deleted successfully."
-    }
+    return {"message": "Assessment deleted successfully."}

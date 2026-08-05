@@ -7,7 +7,7 @@ from sqlalchemy import (
     Text,
     DateTime,
     ForeignKey,
-    Enum as SqlEnum
+    Enum as SqlEnum,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -38,95 +38,43 @@ class Question(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    user_id = Column(
-        Integer,
-        ForeignKey("users.id"),
-        nullable=False
-    )
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
-    concept_id = Column(
-        Integer,
-        ForeignKey("concepts.id"),
-        nullable=False
-    )
+    concept_id = Column(Integer, ForeignKey("concepts.id"), nullable=False)
 
-    question = Column(
-        Text,
-        nullable=False
-    )
+    question = Column(Text, nullable=False)
 
-    option_a = Column(
-        String(255),
-        nullable=False
-    )
+    option_a = Column(String(255), nullable=False)
 
-    option_b = Column(
-        String(255),
-        nullable=False
-    )
+    option_b = Column(String(255), nullable=False)
 
-    option_c = Column(
-        String(255),
-        nullable=False
-    )
+    option_c = Column(String(255), nullable=False)
 
-    option_d = Column(
-        String(255),
-        nullable=False
-    )
+    option_d = Column(String(255), nullable=False)
 
-    correct_answer = Column(
-        SqlEnum(AnswerOption),
-        nullable=False
-    )
+    correct_answer = Column(SqlEnum(AnswerOption), nullable=False)
 
-    explanation = Column(
-        Text,
-        nullable=False
-    )
+    explanation = Column(Text, nullable=False)
 
-    difficulty = Column(
-        SqlEnum(DifficultyLevel),
-        nullable=False
-    )
+    difficulty = Column(SqlEnum(DifficultyLevel), nullable=False)
 
     question_type = Column(
-        SqlEnum(QuestionType),
-        default=QuestionType.MCQ,
-        nullable=False
+        SqlEnum(QuestionType), default=QuestionType.MCQ, nullable=False
     )
 
-    marks = Column(
-        Integer,
-        nullable=False
-    )
+    marks = Column(Integer, nullable=False)
 
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now()
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    owner = relationship(
-        "User",
-        back_populates="questions"
-    )
+    owner = relationship("User", back_populates="questions")
 
-    concept = relationship(
-        "Concept",
-        back_populates="questions"
-    )
+    concept = relationship("Concept", back_populates="questions")
     assessment_questions = relationship(
-    "AssessmentQuestion",
-    back_populates="question",
-    cascade="all, delete-orphan"
+        "AssessmentQuestion", back_populates="question", cascade="all, delete-orphan"
     )
     attempt_answers = relationship(
-    "AssessmentAnswer",
-    back_populates="question",
-    cascade="all, delete-orphan"
+        "AssessmentAnswer", back_populates="question", cascade="all, delete-orphan"
     )
     question_competencies = relationship(
-    "QuestionCompetency",
-    back_populates="question",
-    cascade="all, delete-orphan"
-)
+        "QuestionCompetency", back_populates="question", cascade="all, delete-orphan"
+    )

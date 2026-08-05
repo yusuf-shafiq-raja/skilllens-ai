@@ -5,23 +5,15 @@ from app.models.assessment_question import AssessmentQuestion
 from app.models.question import Question
 from app.models.user import User
 
-from app.schemas.assessment_question import (
-    AssessmentQuestionCreate
-)
+from app.schemas.assessment_question import AssessmentQuestionCreate
 
 
 def add_questions_to_assessment(
-    db: Session,
-    assessment_id: int,
-    data: AssessmentQuestionCreate,
-    current_user: User
+    db: Session, assessment_id: int, data: AssessmentQuestionCreate, current_user: User
 ):
     assessment = (
         db.query(Assessment)
-        .filter(
-            Assessment.id == assessment_id,
-            Assessment.user_id == current_user.id
-        )
+        .filter(Assessment.id == assessment_id, Assessment.user_id == current_user.id)
         .first()
     )
 
@@ -34,10 +26,7 @@ def add_questions_to_assessment(
 
         question = (
             db.query(Question)
-            .filter(
-                Question.id == question_id,
-                Question.user_id == current_user.id
-            )
+            .filter(Question.id == question_id, Question.user_id == current_user.id)
             .first()
         )
 
@@ -48,7 +37,7 @@ def add_questions_to_assessment(
             db.query(AssessmentQuestion)
             .filter(
                 AssessmentQuestion.assessment_id == assessment_id,
-                AssessmentQuestion.question_id == question_id
+                AssessmentQuestion.question_id == question_id,
             )
             .first()
         )
@@ -57,9 +46,7 @@ def add_questions_to_assessment(
             continue
 
         link = AssessmentQuestion(
-            assessment_id=assessment_id,
-            question_id=question_id,
-            marks=question.marks
+            assessment_id=assessment_id, question_id=question_id, marks=question.marks
         )
 
         db.add(link)
@@ -70,17 +57,10 @@ def add_questions_to_assessment(
     return added_questions
 
 
-def get_assessment_questions(
-    db: Session,
-    assessment_id: int,
-    current_user: User
-):
+def get_assessment_questions(db: Session, assessment_id: int, current_user: User):
     assessment = (
         db.query(Assessment)
-        .filter(
-            Assessment.id == assessment_id,
-            Assessment.user_id == current_user.id
-        )
+        .filter(Assessment.id == assessment_id, Assessment.user_id == current_user.id)
         .first()
     )
 
@@ -89,25 +69,17 @@ def get_assessment_questions(
 
     return (
         db.query(AssessmentQuestion)
-        .filter(
-            AssessmentQuestion.assessment_id == assessment_id
-        )
+        .filter(AssessmentQuestion.assessment_id == assessment_id)
         .all()
     )
 
 
 def remove_question_from_assessment(
-    db: Session,
-    assessment_id: int,
-    question_id: int,
-    current_user: User
+    db: Session, assessment_id: int, question_id: int, current_user: User
 ):
     assessment = (
         db.query(Assessment)
-        .filter(
-            Assessment.id == assessment_id,
-            Assessment.user_id == current_user.id
-        )
+        .filter(Assessment.id == assessment_id, Assessment.user_id == current_user.id)
         .first()
     )
 
@@ -118,7 +90,7 @@ def remove_question_from_assessment(
         db.query(AssessmentQuestion)
         .filter(
             AssessmentQuestion.assessment_id == assessment_id,
-            AssessmentQuestion.question_id == question_id
+            AssessmentQuestion.question_id == question_id,
         )
         .first()
     )
@@ -129,6 +101,4 @@ def remove_question_from_assessment(
     db.delete(record)
     db.commit()
 
-    return {
-        "message": "Question removed successfully."
-    }
+    return {"message": "Question removed successfully."}

@@ -5,8 +5,8 @@ from app.core.config import APP_NAME, APP_VERSION
 from app.database import Base, engine
 from app.routes.auth import router as auth_router
 from app.routes.user import router as user_router
+
 # Import Models
-from app.models.user import User
 
 # Import Routes
 from app.routes.health import router as health_router
@@ -21,19 +21,17 @@ from app.routes.competency_score import router as competency_score_router
 from app.routes.roadmap import router as roadmap_router
 from app.routes.resume import router as resume_router
 from app.routes.dashboard import router as dashboard_router
-from app.models.roadmap import Roadmap
 from app.routes.roadmap import router as roadmap_router
 from app.routes.learning_roadmap import router as learning_roadmap_router
-from app.routes.placement_readiness import (
-    router as placement_readiness_router
-)
+from app.routes.placement_readiness import router as placement_readiness_router
+
 # Create Tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title=APP_NAME,
     description="AI-Powered Competency Intelligence Platform",
-    version=APP_VERSION
+    version=APP_VERSION,
 )
 # ---------------------------------------------------------
 # CORS
@@ -41,9 +39,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173"
-    ],
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -68,8 +64,7 @@ app.include_router(roadmap_router)
 app.include_router(learning_roadmap_router)
 app.include_router(placement_readiness_router)
 
+
 @app.get("/")
 def root():
-    return {
-        "message": "Welcome to SkillLens AI 🚀"
-    }
+    return {"message": "Welcome to SkillLens AI 🚀"}

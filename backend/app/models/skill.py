@@ -10,33 +10,21 @@ class Skill(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    user_id = Column(
-        Integer,
-        ForeignKey("users.id"),
-        nullable=False
-    )
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     name = Column(String(100), nullable=False)
     description = Column(String(500), nullable=False)
     category = Column(String(100), nullable=False)
 
-    created_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now()
-    )
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     owner = relationship("User", back_populates="skills")
     concepts = relationship(
-    "Concept",
-    back_populates="skill",
-    cascade="all, delete-orphan"
+        "Concept", back_populates="skill", cascade="all, delete-orphan"
     )
     assessments = relationship(
-    "Assessment",
-    back_populates="skill",
-    cascade="all, delete-orphan"
+        "Assessment", back_populates="skill", cascade="all, delete-orphan"
     )
     competencies = relationship(
-    "Competency",
-    back_populates="skill",
-    cascade="all, delete-orphan")
+        "Competency", back_populates="skill", cascade="all, delete-orphan"
+    )

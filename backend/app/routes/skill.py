@@ -12,25 +12,21 @@ from app.services.skill_service import (
     delete_skill,
 )
 
-router = APIRouter(
-    prefix="/skills",
-    tags=["Skills"]
-)
+router = APIRouter(prefix="/skills", tags=["Skills"])
 
 
 @router.post("/", response_model=SkillResponse)
 def add_skill(
     skill: SkillCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     return create_skill(db, skill, current_user)
 
 
 @router.get("/", response_model=list[SkillResponse])
 def read_skills(
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
 ):
     return get_all_skills(db, current_user)
 
@@ -39,15 +35,12 @@ def read_skills(
 def read_skill(
     skill_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
     skill = get_skill_by_id(db, skill_id, current_user)
 
     if not skill:
-        raise HTTPException(
-            status_code=404,
-            detail="Skill not found"
-        )
+        raise HTTPException(status_code=404, detail="Skill not found")
 
     return skill
 
@@ -57,20 +50,12 @@ def edit_skill(
     skill_id: int,
     skill: SkillUpdate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
-    updated_skill = update_skill(
-        db,
-        skill_id,
-        skill,
-        current_user
-    )
+    updated_skill = update_skill(db, skill_id, skill, current_user)
 
     if not updated_skill:
-        raise HTTPException(
-            status_code=404,
-            detail="Skill not found"
-        )
+        raise HTTPException(status_code=404, detail="Skill not found")
 
     return updated_skill
 
@@ -79,20 +64,11 @@ def edit_skill(
 def remove_skill(
     skill_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
-    deleted_skill = delete_skill(
-        db,
-        skill_id,
-        current_user
-    )
+    deleted_skill = delete_skill(db, skill_id, current_user)
 
     if not deleted_skill:
-        raise HTTPException(
-            status_code=404,
-            detail="Skill not found"
-        )
+        raise HTTPException(status_code=404, detail="Skill not found")
 
-    return {
-        "message": "Skill deleted successfully"
-    }
+    return {"message": "Skill deleted successfully"}

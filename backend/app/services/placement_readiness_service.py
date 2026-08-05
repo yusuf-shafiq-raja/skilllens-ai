@@ -6,16 +6,12 @@ from app.models.placement_readiness import PlacementReadiness
 from app.models.competency_score import CompetencyScore
 from app.models.assessment_attempt import AssessmentAttempt
 
-
 # ---------------------------------------------------------
 # Generate Placement Readiness
 # ---------------------------------------------------------
 
-def generate_placement_readiness(
-    db: Session,
-    current_user: User,
-    resume_score: float
-):
+
+def generate_placement_readiness(db: Session, current_user: User, resume_score: float):
 
     # ----------------------------------------
     # Latest Assessment
@@ -25,11 +21,9 @@ def generate_placement_readiness(
         db.query(AssessmentAttempt)
         .filter(
             AssessmentAttempt.user_id == current_user.id,
-            AssessmentAttempt.is_completed == True
+            AssessmentAttempt.is_completed == True,
         )
-        .order_by(
-            AssessmentAttempt.submitted_at.desc()
-        )
+        .order_by(AssessmentAttempt.submitted_at.desc())
         .first()
     )
 
@@ -41,20 +35,13 @@ def generate_placement_readiness(
 
         assessment_score = 0
 
-
     # ----------------------------------------
     # Average Competency Score
     # ----------------------------------------
 
     competency_score = (
-        db.query(
-            func.avg(
-                CompetencyScore.percentage
-            )
-        )
-        .filter(
-            CompetencyScore.user_id == current_user.id
-        )
+        db.query(func.avg(CompetencyScore.percentage))
+        .filter(CompetencyScore.user_id == current_user.id)
         .scalar()
     )
 
@@ -62,22 +49,11 @@ def generate_placement_readiness(
 
         competency_score = 0
 
-
     # ----------------------------------------
     # Overall Score
     # ----------------------------------------
 
-    overall_score = round(
-
-        (
-            resume_score +
-            assessment_score +
-            competency_score
-        ) / 3,
-
-        2
-    )
-
+    overall_score = round((resume_score + assessment_score + competency_score) / 3, 2)
 
     # ----------------------------------------
     # Readiness Level
@@ -97,8 +73,7 @@ def generate_placement_readiness(
         readiness_level = "Placement Ready"
 
         recommendation = (
-            "You are placement ready. "
-            "Strengthen weak competencies to improve."
+            "You are placement ready. " "Strengthen weak competencies to improve."
         )
 
     elif overall_score >= 50:
@@ -106,8 +81,7 @@ def generate_placement_readiness(
         readiness_level = "Intermediate"
 
         recommendation = (
-            "Practice assessments regularly and "
-            "complete your learning roadmap."
+            "Practice assessments regularly and " "complete your learning roadmap."
         )
 
     else:
@@ -115,27 +89,17 @@ def generate_placement_readiness(
         readiness_level = "Beginner"
 
         recommendation = (
-            "Focus on learning core concepts before "
-            "attempting placements."
+            "Focus on learning core concepts before " "attempting placements."
         )
-
 
     # ----------------------------------------
     # Save / Update
     # ----------------------------------------
 
     existing = (
-
-        db.query(
-            PlacementReadiness
-        )
-
-        .filter(
-            PlacementReadiness.user_id == current_user.id
-        )
-
+        db.query(PlacementReadiness)
+        .filter(PlacementReadiness.user_id == current_user.id)
         .first()
-
     )
 
     if existing:
@@ -158,23 +122,14 @@ def generate_placement_readiness(
 
         return existing
 
-
     placement = PlacementReadiness(
-
         user_id=current_user.id,
-
         resume_score=resume_score,
-
         assessment_score=assessment_score,
-
         competency_score=competency_score,
-
         overall_score=overall_score,
-
         readiness_level=readiness_level,
-
-        recommendation=recommendation
-
+        recommendation=recommendation,
     )
 
     db.add(placement)
@@ -190,29 +145,17 @@ def generate_placement_readiness(
 # Get Placement Readiness
 # ---------------------------------------------------------
 
-def get_placement_readiness(
-    db: Session,
-    current_user: User
-):
+
+def get_placement_readiness(db: Session, current_user: User):
 
     placement = (
-
-        db.query(
-            PlacementReadiness
-        )
-
-        .filter(
-            PlacementReadiness.user_id == current_user.id
-        )
-
+        db.query(PlacementReadiness)
+        .filter(PlacementReadiness.user_id == current_user.id)
         .first()
-
     )
 
     if placement is None:
 
-        raise ValueError(
-            "Placement readiness not generated."
-        )
+        raise ValueError("Placement readiness not generated.")
 
     return placement

@@ -1,12 +1,4 @@
-from sqlalchemy import (
-    Column,
-    Integer,
-    Float,
-    String,
-    Boolean,
-    DateTime,
-    ForeignKey
-)
+from sqlalchemy import Column, Integer, Float, String, Boolean, DateTime, ForeignKey
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
@@ -19,15 +11,11 @@ class AssessmentAttempt(Base):
     id = Column(Integer, primary_key=True, index=True)
 
     user_id = Column(
-        Integer,
-        ForeignKey("users.id", ondelete="CASCADE"),
-        nullable=False
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
 
     assessment_id = Column(
-        Integer,
-        ForeignKey("assessments.id", ondelete="CASCADE"),
-        nullable=False
+        Integer, ForeignKey("assessments.id", ondelete="CASCADE"), nullable=False
     )
 
     score = Column(Integer, default=0)
@@ -36,48 +24,25 @@ class AssessmentAttempt(Base):
 
     percentage = Column(Float, default=0.0)
 
-    status = Column(
-        String,
-        default="IN_PROGRESS"
-    )
+    status = Column(String, default="IN_PROGRESS")
 
-    is_completed = Column(
-        Boolean,
-        default=False
-    )
+    is_completed = Column(Boolean, default=False)
 
-    time_taken_seconds = Column(
-        Integer,
-        default=0
-    )
+    time_taken_seconds = Column(Integer, default=0)
 
-    started_at = Column(
-        DateTime(timezone=True),
-        server_default=func.now()
-    )
+    started_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    submitted_at = Column(
-        DateTime(timezone=True),
-        nullable=True
-    )
+    submitted_at = Column(DateTime(timezone=True), nullable=True)
 
-    owner = relationship(
-        "User",
-        back_populates="assessment_attempts"
-    )
+    owner = relationship("User", back_populates="assessment_attempts")
 
-    assessment = relationship(
-        "Assessment",
-        back_populates="attempts"
-    )
+    assessment = relationship("Assessment", back_populates="attempts")
 
     answers = relationship(
-        "AssessmentAnswer",
-        back_populates="attempt",
-        cascade="all, delete-orphan"
+        "AssessmentAnswer", back_populates="attempt", cascade="all, delete-orphan"
     )
     competency_scores = relationship(
-    "CompetencyScore",
-    back_populates="assessment_attempt",
-    cascade="all, delete-orphan"
-)
+        "CompetencyScore",
+        back_populates="assessment_attempt",
+        cascade="all, delete-orphan",
+    )

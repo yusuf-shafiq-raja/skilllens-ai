@@ -8,32 +8,24 @@ from app.models.skill import Skill
 from app.models.assessment import Assessment
 from app.utils.pdf_parser import extract_text_from_pdf
 
-
 # ---------------------------------------------------------
 # Analyze Resume
 # ---------------------------------------------------------
 
-def analyze_resume(
-    db: Session,
-    file: UploadFile
-):
+
+def analyze_resume(db: Session, file: UploadFile):
     # ----------------------------------------
     # Validate File
     # ----------------------------------------
 
     if not file.filename.lower().endswith(".pdf"):
-        raise ValueError(
-            "Only PDF files are allowed."
-        )
+        raise ValueError("Only PDF files are allowed.")
 
     # ----------------------------------------
     # Save Temporary File
     # ----------------------------------------
 
-    with tempfile.NamedTemporaryFile(
-        delete=False,
-        suffix=".pdf"
-    ) as temp_file:
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
 
         temp_file.write(file.file.read())
 
@@ -43,9 +35,7 @@ def analyze_resume(
     # Extract Text
     # ----------------------------------------
 
-    extracted_text = extract_text_from_pdf(
-        temp_path
-    )
+    extracted_text = extract_text_from_pdf(temp_path)
 
     os.remove(temp_path)
 
@@ -59,10 +49,7 @@ def analyze_resume(
     # Fetch Skills
     # ----------------------------------------
 
-    skills = (
-        db.query(Skill)
-        .all()
-    )
+    skills = db.query(Skill).all()
 
     matched_skills = []
     missing_skills = []
@@ -93,16 +80,7 @@ def analyze_resume(
 
     else:
 
-        readiness_score = round(
-
-            (
-                len(matched_skills)
-                /
-                total_skills
-            ) * 100,
-
-            2
-        )
+        readiness_score = round((len(matched_skills) / total_skills) * 100, 2)
 
     # ----------------------------------------
     # Recommended Assessments
@@ -113,77 +91,37 @@ def analyze_resume(
     for skill in matched_skills:
 
         assessments = (
-
             db.query(Assessment)
-
             .filter(
-
                 Assessment.skill_id == skill.id,
-
                 Assessment.user_id == skill.user_id,
-
-                Assessment.is_active == True
-
+                Assessment.is_active == True,
             )
-
             .all()
-
         )
 
         for assessment in assessments:
 
-            recommended_assessments.append({
-
-                "id": assessment.id,
-
-                "title": assessment.title,
-
-                "description": assessment.description,
-
-                "duration_minutes": assessment.duration_minutes,
-
-                "passing_score": assessment.passing_score
-
-            })
+            recommended_assessments.append(
+                {
+                    "id": assessment.id,
+                    "title": assessment.title,
+                    "description": assessment.description,
+                    "duration_minutes": assessment.duration_minutes,
+                    "passing_score": assessment.passing_score,
+                }
+            )
 
     # ----------------------------------------
     # Return Response
     # ----------------------------------------
 
     return {
-
-        "matched_skills": [
-
-            skill.name
-
-            for skill in matched_skills
-
-        ],
-
-        "missing_skills": [
-
-            skill.name
-
-            for skill in missing_skills
-
-        ],
-
-        "matched_count": len(
-
-            matched_skills
-
-        ),
-
-        "missing_count": len(
-
-            missing_skills
-
-        ),
-
+        "matched_skills": [skill.name for skill in matched_skills],
+        "missing_skills": [skill.name for skill in missing_skills],
+        "matched_count": len(matched_skills),
+        "missing_count": len(missing_skills),
         "readiness_score": readiness_score,
-
         "extracted_text": extracted_text,
-
-        "recommended_assessments": recommended_assessments
-
+        "recommended_assessments": recommended_assessments,
     }

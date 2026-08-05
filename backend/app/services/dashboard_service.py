@@ -6,15 +6,12 @@ from app.models.assessment_attempt import AssessmentAttempt
 from app.models.competency_score import CompetencyScore
 from app.models.competency import Competency
 
-
 # ---------------------------------------------------------
 # Dashboard
 # ---------------------------------------------------------
 
-def get_dashboard(
-    db: Session,
-    current_user: User
-):
+
+def get_dashboard(db: Session, current_user: User):
 
     # ----------------------------------------
     # Total Assessments
@@ -22,9 +19,7 @@ def get_dashboard(
 
     total_assessments = (
         db.query(AssessmentAttempt)
-        .filter(
-            AssessmentAttempt.user_id == current_user.id
-        )
+        .filter(AssessmentAttempt.user_id == current_user.id)
         .count()
     )
 
@@ -36,7 +31,7 @@ def get_dashboard(
         db.query(AssessmentAttempt)
         .filter(
             AssessmentAttempt.user_id == current_user.id,
-            AssessmentAttempt.is_completed == True
+            AssessmentAttempt.is_completed == True,
         )
         .count()
     )
@@ -46,14 +41,10 @@ def get_dashboard(
     # ----------------------------------------
 
     average_score = (
-        db.query(
-            func.avg(
-                AssessmentAttempt.percentage
-            )
-        )
+        db.query(func.avg(AssessmentAttempt.percentage))
         .filter(
             AssessmentAttempt.user_id == current_user.id,
-            AssessmentAttempt.is_completed == True
+            AssessmentAttempt.is_completed == True,
         )
         .scalar()
     )
@@ -61,10 +52,7 @@ def get_dashboard(
     if average_score is None:
         average_score = 0
 
-    average_score = round(
-        average_score,
-        2
-    )
+    average_score = round(average_score, 2)
 
     # ----------------------------------------
     # Latest Assessment
@@ -74,11 +62,9 @@ def get_dashboard(
         db.query(AssessmentAttempt)
         .filter(
             AssessmentAttempt.user_id == current_user.id,
-            AssessmentAttempt.is_completed == True
+            AssessmentAttempt.is_completed == True,
         )
-        .order_by(
-            AssessmentAttempt.submitted_at.desc()
-        )
+        .order_by(AssessmentAttempt.submitted_at.desc())
         .first()
     )
 
@@ -93,12 +79,8 @@ def get_dashboard(
 
     top_score = (
         db.query(CompetencyScore)
-        .filter(
-            CompetencyScore.user_id == current_user.id
-        )
-        .order_by(
-            CompetencyScore.percentage.desc()
-        )
+        .filter(CompetencyScore.user_id == current_user.id)
+        .order_by(CompetencyScore.percentage.desc())
         .first()
     )
 
@@ -108,9 +90,7 @@ def get_dashboard(
 
         competency = (
             db.query(Competency)
-            .filter(
-                Competency.id == top_score.competency_id
-            )
+            .filter(Competency.id == top_score.competency_id)
             .first()
         )
 
@@ -123,12 +103,8 @@ def get_dashboard(
 
     weak_score = (
         db.query(CompetencyScore)
-        .filter(
-            CompetencyScore.user_id == current_user.id
-        )
-        .order_by(
-            CompetencyScore.percentage.asc()
-        )
+        .filter(CompetencyScore.user_id == current_user.id)
+        .order_by(CompetencyScore.percentage.asc())
         .first()
     )
 
@@ -140,9 +116,7 @@ def get_dashboard(
 
         competency = (
             db.query(Competency)
-            .filter(
-                Competency.id == weak_score.competency_id
-            )
+            .filter(Competency.id == weak_score.competency_id)
             .first()
         )
 
@@ -163,22 +137,13 @@ def get_dashboard(
     # ----------------------------------------
 
     return {
-
         "user_name": current_user.name,
-
         "total_assessments": total_assessments,
-
         "completed_assessments": completed_assessments,
-
         "average_score": average_score,
-
         "latest_score": latest_score,
-
         "top_competency": top_competency,
-
         "weakest_competency": weakest_competency,
-
         "roadmap_priority": roadmap_priority,
-
-        "resume_readiness": resume_readiness
+        "resume_readiness": resume_readiness,
     }

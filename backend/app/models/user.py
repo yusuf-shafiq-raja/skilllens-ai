@@ -11,45 +11,23 @@ class User(Base):
 
     name = Column(String(100), nullable=False)
 
-    email = Column(
-        String(150),
-        unique=True,
-        nullable=False,
-        index=True
-    )
+    email = Column(String(150), unique=True, nullable=False, index=True)
 
-    hashed_password = Column(
-        String(255),
-        nullable=False
-    )
+    hashed_password = Column(String(255), nullable=False)
 
-    skills = relationship(
-        "Skill",
-        back_populates="owner",
-        cascade="all, delete-orphan"
-    )
+    skills = relationship("Skill", back_populates="owner", cascade="all, delete-orphan")
     concepts = relationship(
-    "Concept",
-    back_populates="owner",
-    cascade="all, delete-orphan"
+        "Concept", back_populates="owner", cascade="all, delete-orphan"
     )
     questions = relationship(
-    "Question",
-    back_populates="owner",
-    cascade="all, delete-orphan"
+        "Question", back_populates="owner", cascade="all, delete-orphan"
     )
     assessments = relationship(
-    "Assessment",
-    back_populates="owner",
-    cascade="all, delete-orphan"
+        "Assessment", back_populates="owner", cascade="all, delete-orphan"
     )
     assessment_attempts = relationship(
-    "AssessmentAttempt",
-    back_populates="owner",
-    cascade="all, delete-orphan"
+        "AssessmentAttempt", back_populates="owner", cascade="all, delete-orphan"
     )
     competency_scores = relationship(
-    "CompetencyScore",
-    back_populates="owner",
-    cascade="all, delete-orphan"
-)
+        "CompetencyScore", back_populates="owner", cascade="all, delete-orphan"
+    )

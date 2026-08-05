@@ -7,33 +7,24 @@ from app.models.competency import Competency
 from app.models.user import User
 
 
-def get_latest_learning_roadmap(
-    db: Session,
-    current_user: User
-):
+def get_latest_learning_roadmap(db: Session, current_user: User):
 
     latest_attempt = (
         db.query(AssessmentAttempt)
         .filter(
             AssessmentAttempt.user_id == current_user.id,
-            AssessmentAttempt.is_completed == True
+            AssessmentAttempt.is_completed == True,
         )
-        .order_by(
-            AssessmentAttempt.submitted_at.desc()
-        )
+        .order_by(AssessmentAttempt.submitted_at.desc())
         .first()
     )
 
     if not latest_attempt:
-        raise ValueError(
-            "No completed assessment found."
-        )
+        raise ValueError("No completed assessment found.")
 
     competency_scores = (
         db.query(CompetencyScore)
-        .filter(
-            CompetencyScore.assessment_attempt_id == latest_attempt.id
-        )
+        .filter(CompetencyScore.assessment_attempt_id == latest_attempt.id)
         .all()
     )
 
@@ -44,8 +35,7 @@ def get_latest_learning_roadmap(
         roadmap = (
             db.query(Roadmap)
             .filter(
-                Roadmap.competency_id == score.competency_id,
-                Roadmap.is_active == True
+                Roadmap.competency_id == score.competency_id, Roadmap.is_active == True
             )
             .first()
         )
@@ -54,11 +44,7 @@ def get_latest_learning_roadmap(
             continue
 
         competency = (
-            db.query(Competency)
-            .filter(
-                Competency.id == score.competency_id
-            )
-            .first()
+            db.query(Competency).filter(Competency.id == score.competency_id).first()
         )
 
         if score.percentage < 50:
@@ -73,20 +59,15 @@ def get_latest_learning_roadmap(
 
             level = "Strong"
 
-        learning_plan.append({
-
-            "competency": competency.name,
-
-            "percentage": score.percentage,
-
-            "level": level,
-
-            "study_topics": roadmap.study_topics.split(","),
-
-            "practice_tasks": roadmap.practice_tasks.split(","),
-
-            "next_learning": roadmap.next_learning
-
-        })
+        learning_plan.append(
+            {
+                "competency": competency.name,
+                "percentage": score.percentage,
+                "level": level,
+                "study_topics": roadmap.study_topics.split(","),
+                "practice_tasks": roadmap.practice_tasks.split(","),
+                "next_learning": roadmap.next_learning,
+            }
+        )
 
     return learning_plan

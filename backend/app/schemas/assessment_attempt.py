@@ -41,6 +41,7 @@ class StartAssessmentResponse(BaseModel):
 
     questions: List[QuestionForAttempt]
 
+
 class AssessmentAttemptDetailsResponse(BaseModel):
 
     attempt_id: int
@@ -50,6 +51,8 @@ class AssessmentAttemptDetailsResponse(BaseModel):
     assessment: AssessmentInfo
 
     questions: List[QuestionForAttempt]
+
+
 class AssessmentResultResponse(BaseModel):
 
     id: int

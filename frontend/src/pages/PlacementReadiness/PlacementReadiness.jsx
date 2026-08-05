@@ -1,155 +1,163 @@
 import { useEffect, useState } from "react";
 
+import Sidebar from "../../components/Sidebar/Sidebar";
+import Navbar from "../../components/Navbar/Navbar";
+
 import {
-    getPlacementReadiness
+  getPlacementReadiness,
 } from "../../services/placementReadinessService";
 
 function PlacementReadiness() {
 
-    const [data, setData] = useState(null);
+  const [data, setData] = useState(null);
 
-    const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
+  useEffect(() => {
+    loadPlacementReadiness();
+  }, []);
 
-        loadPlacementReadiness();
+  const loadPlacementReadiness = async () => {
 
-    }, []);
+    try {
 
-    const loadPlacementReadiness = async () => {
+      const response =
+        await getPlacementReadiness();
 
-        try {
+      setData(response);
 
-            const response =
-                await getPlacementReadiness();
+    } catch (error) {
 
-            setData(response);
+      console.error(error);
 
-        }
+    } finally {
 
-        catch (error) {
-
-            console.error(error);
-
-        }
-
-        finally {
-
-            setLoading(false);
-
-        }
-
-    };
-
-    if (loading) {
-
-        return <h2>Loading...</h2>;
+      setLoading(false);
 
     }
+  };
 
-    if (!data) {
+  return (
 
-        return <h2>No Placement Readiness Found</h2>;
+    <div className="flex bg-slate-100 min-h-screen">
 
-    }
+      <Sidebar />
 
-    return (
+      <div className="flex-1">
 
-        <div className="container mt-4">
+        <Navbar />
 
-            <h2>Placement Readiness</h2>
+        <div className="p-10">
 
-            <hr />
+          <h1 className="text-5xl font-bold mb-8">
+            Placement Readiness
+          </h1>
 
-            <div className="card p-4">
+          {loading && (
 
-                <h3>
+            <div className="bg-white rounded-2xl shadow p-8">
 
-                    Overall Score
-
-                </h3>
-
-                <h1>
-
-                    {data.overall_score}%
-
-                </h1>
-
-                <hr />
-
-                <h4>
-
-                    Readiness Level
-
-                </h4>
-
-                <p>
-
-                    {data.readiness_level}
-
-                </p>
-
-                <hr />
-
-                <h4>
-
-                    Resume Score
-
-                </h4>
-
-                <p>
-
-                    {data.resume_score}%
-
-                </p>
-
-                <hr />
-
-                <h4>
-
-                    Assessment Score
-
-                </h4>
-
-                <p>
-
-                    {data.assessment_score}%
-
-                </p>
-
-                <hr />
-
-                <h4>
-
-                    Competency Score
-
-                </h4>
-
-                <p>
-
-                    {data.competency_score}%
-
-                </p>
-
-                <hr />
-
-                <h4>
-
-                    Recommendation
-
-                </h4>
-
-                <p>
-
-                    {data.recommendation}
-
-                </p>
+              Loading...
 
             </div>
 
+          )}
+
+          {!loading && !data && (
+
+            <div className="bg-white rounded-2xl shadow p-8">
+
+              No Placement Readiness Data
+
+            </div>
+
+          )}
+
+          {!loading && data && (
+
+            <div className="bg-white rounded-2xl shadow p-8">
+
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+
+                <div>
+                  <h3 className="text-gray-500">
+                    Overall Score
+                  </h3>
+
+                  <p className="text-5xl font-bold text-blue-600 mt-2">
+                    {data.overall_score}%
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-gray-500">
+                    Resume Score
+                  </h3>
+
+                  <p className="text-4xl font-bold mt-2">
+                    {data.resume_score}%
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-gray-500">
+                    Assessment Score
+                  </h3>
+
+                  <p className="text-4xl font-bold mt-2">
+                    {data.assessment_score}%
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-gray-500">
+                    Competency Score
+                  </h3>
+
+                  <p className="text-4xl font-bold mt-2">
+                    {data.competency_score}%
+                  </p>
+                </div>
+
+              </div>
+
+              <hr className="my-8" />
+
+              <div>
+
+                <h2 className="text-2xl font-bold mb-3">
+                  Readiness Level
+                </h2>
+
+                <p className="text-xl text-green-600 font-semibold">
+                  {data.readiness_level}
+                </p>
+
+              </div>
+
+              <div className="mt-8">
+
+                <h2 className="text-2xl font-bold mb-3">
+                  Recommendation
+                </h2>
+
+                <p className="text-gray-700">
+                  {data.recommendation}
+                </p>
+
+              </div>
+
+            </div>
+
+          )}
+
         </div>
 
-    );
+      </div>
+
+    </div>
+
+  );
 
 }
 

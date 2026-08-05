@@ -4,24 +4,13 @@ from app.models.roadmap import Roadmap
 from app.models.competency import Competency
 from app.models.user import User
 
-from app.schemas.roadmap import (
-    RoadmapCreate,
-    RoadmapUpdate
-)
+from app.schemas.roadmap import RoadmapCreate, RoadmapUpdate
 
 
-def create_roadmap(
-    db: Session,
-    roadmap: RoadmapCreate,
-    current_user: User
-):
+def create_roadmap(db: Session, roadmap: RoadmapCreate, current_user: User):
 
     competency = (
-        db.query(Competency)
-        .filter(
-            Competency.id == roadmap.competency_id
-        )
-        .first()
+        db.query(Competency).filter(Competency.id == roadmap.competency_id).first()
     )
 
     if not competency:
@@ -38,54 +27,26 @@ def create_roadmap(
     return new_roadmap
 
 
-def get_all_roadmaps(
-    db: Session
-):
+def get_all_roadmaps(db: Session):
 
-    return db.query(
-        Roadmap
-    ).all()
+    return db.query(Roadmap).all()
 
 
-def get_roadmap(
-    db: Session,
-    roadmap_id: int
-):
+def get_roadmap(db: Session, roadmap_id: int):
 
-    return (
-        db.query(Roadmap)
-        .filter(
-            Roadmap.id == roadmap_id
-        )
-        .first()
-    )
+    return db.query(Roadmap).filter(Roadmap.id == roadmap_id).first()
 
 
-def update_roadmap(
-    db: Session,
-    roadmap_id: int,
-    roadmap: RoadmapUpdate
-):
+def update_roadmap(db: Session, roadmap_id: int, roadmap: RoadmapUpdate):
 
-    existing = get_roadmap(
-        db,
-        roadmap_id
-    )
+    existing = get_roadmap(db, roadmap_id)
 
     if not existing:
-        raise ValueError(
-            "Roadmap not found."
-        )
+        raise ValueError("Roadmap not found.")
 
-    for key, value in roadmap.model_dump(
-        exclude_unset=True
-    ).items():
+    for key, value in roadmap.model_dump(exclude_unset=True).items():
 
-        setattr(
-            existing,
-            key,
-            value
-        )
+        setattr(existing, key, value)
 
     db.commit()
 
@@ -94,25 +55,15 @@ def update_roadmap(
     return existing
 
 
-def delete_roadmap(
-    db: Session,
-    roadmap_id: int
-):
+def delete_roadmap(db: Session, roadmap_id: int):
 
-    roadmap = get_roadmap(
-        db,
-        roadmap_id
-    )
+    roadmap = get_roadmap(db, roadmap_id)
 
     if not roadmap:
-        raise ValueError(
-            "Roadmap not found."
-        )
+        raise ValueError("Roadmap not found.")
 
     db.delete(roadmap)
 
     db.commit()
 
-    return {
-        "message": "Roadmap deleted successfully."
-    }
+    return {"message": "Roadmap deleted successfully."}

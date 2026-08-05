@@ -114,10 +114,15 @@ function App() {
             path="*"
             element={<Navigate to="/" replace />}
           />
+          {/* Placement Readiness */}
           <Route
-    path="/placement-readiness"
-    element={<PlacementReadiness />}
-/>
+            path="/placement-readiness"
+            element={
+              <ProtectedRoute>
+                <PlacementReadiness />
+              </ProtectedRoute>
+            }
+          />  
 
         </Routes>
 

@@ -7,48 +7,25 @@ from app.models.question_competency import QuestionCompetency
 from app.models.competency_score import CompetencyScore
 
 
-def calculate_competency_scores(
-    db: Session,
-    attempt,
-    answers
-):
+def calculate_competency_scores(db: Session, attempt, answers):
 
     db.query(CompetencyScore).filter(
         CompetencyScore.assessment_attempt_id == attempt.id
     ).delete()
 
     competency_data = defaultdict(
-        lambda: {
-            "questions": 0,
-            "correct": 0,
-            "earned": 0.0,
-            "total": 0.0
-        }
+        lambda: {"questions": 0, "correct": 0, "earned": 0.0, "total": 0.0}
     )
 
-    question_ids = [
-        answer.question_id
-        for answer in answers
-    ]
+    question_ids = [answer.question_id for answer in answers]
 
-    questions = (
-        db.query(Question)
-        .filter(
-            Question.id.in_(question_ids)
-        )
-        .all()
-    )
+    questions = db.query(Question).filter(Question.id.in_(question_ids)).all()
 
-    question_map = {
-        q.id: q
-        for q in questions
-    }
+    question_map = {q.id: q for q in questions}
 
     mappings = (
         db.query(QuestionCompetency)
-        .filter(
-            QuestionCompetency.question_id.in_(question_ids)
-        )
+        .filter(QuestionCompetency.question_id.in_(question_ids))
         .all()
     )
 
@@ -56,24 +33,18 @@ def calculate_competency_scores(
 
     for mapping in mappings:
 
-        mapping_dict[
-            mapping.question_id
-        ].append(mapping)
+        mapping_dict[mapping.question_id].append(mapping)
 
     for answer in answers:
 
-        question = question_map.get(
-            answer.question_id
-        )
+        question = question_map.get(answer.question_id)
 
         if question is None:
             continue
 
         for mapping in mapping_dict.get(question.id, []):
 
-            competency = competency_data[
-                mapping.competency_id
-            ]
+            competency = competency_data[mapping.competency_id]
 
             competency["questions"] += 1
 
@@ -91,38 +62,18 @@ def calculate_competency_scores(
 
         if data["total"] > 0:
 
-            percentage = round(
-                (
-                    data["earned"]
-                    /
-                    data["total"]
-                ) * 100,
-                2
-            )
+            percentage = round((data["earned"] / data["total"]) * 100, 2)
 
         db.add(
-
             CompetencyScore(
-
                 user_id=attempt.user_id,
-
                 competency_id=competency_id,
-
                 assessment_attempt_id=attempt.id,
-
-                score=round(
-                    data["earned"],
-                    2
-                ),
-
+                score=round(data["earned"], 2),
                 total_questions=data["questions"],
-
                 correct_answers=data["correct"],
-
-                percentage=percentage
-
+                percentage=percentage,
             )
-
         )
 
     db.commit()

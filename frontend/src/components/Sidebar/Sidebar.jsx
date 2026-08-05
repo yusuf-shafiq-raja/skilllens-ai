@@ -6,6 +6,7 @@ import {
   Brain,
   BookOpen,
   FileText,
+  Briefcase,
 } from "lucide-react";
 
 function Sidebar() {
@@ -31,6 +32,11 @@ function Sidebar() {
       icon: <BookOpen size={20} />,
     },
     {
+      name: "Placement",
+      path: "/placement-readiness",
+      icon: <Briefcase size={20} />,
+    },
+    {
       name: "Resume",
       path: "/resume",
       icon: <FileText size={20} />,
@@ -39,15 +45,12 @@ function Sidebar() {
 
   return (
     <aside className="w-64 min-h-screen bg-slate-900 text-white p-6">
-
       <h1 className="text-3xl font-bold mb-10">
         SkillLens AI
       </h1>
 
       <div className="space-y-2">
-
         {menu.map((item) => (
-
           <NavLink
             key={item.name}
             to={item.path}
@@ -62,11 +65,8 @@ function Sidebar() {
             {item.icon}
             <span>{item.name}</span>
           </NavLink>
-
         ))}
-
       </div>
-
     </aside>
   );
 }
