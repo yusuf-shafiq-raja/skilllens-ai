@@ -114,3 +114,19 @@ coverage/
 *.ntvs*
 *.njsproj
 *.sln
+# Python bytecode
+*.pyo
+*.pyd
+
+# Environment files
+.python-version
+
+# Jupyter
+.ipynb_checkpoints/
+
+# macOS
+.AppleDouble
+.LSOverride
+
+# Windows
+$RECYCLE.BIN/

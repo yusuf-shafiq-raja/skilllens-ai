@@ -45,10 +45,27 @@ function Sidebar() {
 
   return (
     <aside className="w-64 min-h-screen bg-slate-900 text-white p-6">
-      <h1 className="text-3xl font-bold mb-10">
-        SkillLens AI
-      </h1>
 
+      {/* Logo */}
+      <div className="flex items-center gap-3 mb-10">
+        <img
+          src="/logo.png"
+          alt="SkillLens AI"
+          className="w-14 h-14 object-contain"
+        />
+
+        <div>
+          <h1 className="text-xl font-bold text-white">
+            SkillLens AI
+          </h1>
+
+          <p className="text-[11px] text-slate-400">
+            Competency Intelligence
+          </p>
+        </div>
+      </div>
+
+      {/* Navigation */}
       <div className="space-y-2">
         {menu.map((item) => (
           <NavLink
@@ -67,6 +84,7 @@ function Sidebar() {
           </NavLink>
         ))}
       </div>
+
     </aside>
   );
 }
