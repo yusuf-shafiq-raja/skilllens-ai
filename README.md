@@ -182,7 +182,7 @@ This makes SkillLens AI a learning-oriented platform rather than just an examina
 The following diagram illustrates the layered architecture of **SkillLens AI**. The application follows a modular enterprise design where each layer has a dedicated responsibility, making the system scalable, maintainable, and easy to extend.
 
 <p align="center">
-    <img src="docs/architecture.svg" alt="SkillLens AI System Architecture" width="100%">
+    <img src="docs/architecture.png" alt="SkillLens AI System Architecture" width="100%">
 </p>
 
 ---
